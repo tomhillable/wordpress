@@ -16,7 +16,7 @@ Release:    %{build_number}.%{git_commit_hash}
 License:    GPLv2
 Packager:   Tom Hill <tom@clockworkcubed.com>
 
-Source0:    %{name}-%{version}.tar.gz
+Source0:    %{name}-%{version}-%{release}.tar.gz
 Source1:    wordpress-httpd-conf
 Source2:    README.fedora.wordpress
 
