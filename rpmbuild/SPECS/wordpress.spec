@@ -12,7 +12,7 @@ URL:        http://www.wordpress.org
 Name:       wordpress
 Version:    4.0
 Group:      Applications/Publishing
-Release:    1%{?dist}
+Release:    %{build_number}.%{git_commit_hash}
 License:    GPLv2
 Packager:   Tom Hill <tom@clockworkcubed.com>
 
