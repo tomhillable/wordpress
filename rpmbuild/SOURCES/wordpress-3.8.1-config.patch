@@ -1,0 +1,32 @@
+diff -up wordpress/wp-config.php.old wordpress/wp-config.php
+--- wordpress/wp-config.php.old	2014-01-25 07:47:17.622959116 +0100
++++ wordpress/wp-config.php	2014-01-25 07:54:06.816454385 +0100
+@@ -72,6 +72,19 @@ $table_prefix  = 'wp_';
+ define('WPLANG', '');
+ 
+ /**
++ * See http://make.wordpress.org/core/2013/10/25/the-definitive-guide-to-disabling-auto-updates-in-wordpress-3-7
++ */
++
++/* Disable all file change, as RPM base installation are read-only */
++define('DISALLOW_FILE_MODS', true);
++
++/* Disable automatic updater, in case you want to allow
++   above FILE_MODS for plugins, themes, ... */
++define('AUTOMATIC_UPDATER_DISABLED', true);
++
++/* Core update is always disabled, WP_AUTO_UPDATE_CORE value is ignore */
++
++/**
+  * For developers: WordPress debugging mode.
+  *
+  * Change this to true to enable the display of notices during development.
+@@ -84,7 +97,7 @@ define('WP_DEBUG', false);
+ 
+ /** Absolute path to the WordPress directory. */
+ if ( !defined('ABSPATH') )
+-	define('ABSPATH', dirname(__FILE__) . '/');
++	define('ABSPATH', '/usr/share/wordpress');
+ 
+ /** Sets up WordPress vars and included files. */
+ require_once(ABSPATH . 'wp-settings.php');

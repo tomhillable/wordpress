@@ -1,0 +1,86 @@
+-------------------------------------------------------------------------------
+
+Wordpress is a database driven blogging program designed to make it exceedingly
+easy to publish an online blog, sometimes also called a weblog or journal.
+
+Once this package is installed, there are a few configuration items which need
+to be performed before the blog is usable.  First, you need to establish a
+username and password to connect to your MySQL database as, and make both
+MySQL and Wordpress aware of this.  Let's start by creating the database and the
+username / password inside MySQL first:
+
+  # mysql
+  mysql> create database wordpress;
+  Query OK, 1 row affected (0.00 sec)
+
+  mysql> grant all privileges on wordpress.* to wordpress identified by 'wordpress';
+  Query OK, 0 rows affected (0.00 sec)
+
+  mysql> flush privileges;
+  Query OK, 0 rows affected (0.00 sec)
+
+  mysql> exit
+  Bye
+  #
+
+Under certain curcumstances, you may need to run variations of the "grant"
+command:
+mysql> grant all privileges on wordpress.* to wordpress@localhost identified by 'wordpress';
+   OR
+mysql> grant all privileges on wordpress.* to wordpress@'%' identified by 'wordpress';
+
+This has created an empty database called 'wordpress', created a user named
+'wordpress' with a password of 'wordpress', and given the 'wordpress' user total
+permission over the 'wordpress' database.  Obviously, you'll want to select a
+different password, and you may want to choose different database and user
+names depending on your installation.  The specific values you choose are
+not constrained, they simply need to be consistent between the database and the
+config file.
+
+Next, you need to edit your /etc/wordpress/wp-config.php file to reflect the
+values you've chosen.  These values will go in the appropriate places at the
+beginning of that file.
+
+Once that's done and the database server and web server have been started, 
+open a web browser to http://localhost/wordpress/wp-admin/install.php and 
+follow the instructions given to you on the pages you see to set up the 
+database tables and begin publishing your blog.
+
+-------------------------------------------------------------------------------
+
+Wordpress ships with Flash and Silverlight plugins for the 'plupload' file
+uploader and the 'mediaelement' media player embedder. The idea is to try and
+be able to provide a multi-file uploader and an embedded video player when
+HTML5 is not available (or does not support the video format in question).
+These plugins are provided as pre-built binaries and there is no mechanism
+for building them from source during Wordpress compilation. As the inclusion
+of pre-built binaries is against Fedora policy - see
+https://fedoraproject.org/wiki/Packaging:Guidelines#No_inclusion_of_pre-built_binaries_or_libraries
+ - these plugins have been removed from the Fedora package. As a consequence:
+
+a) any Wordpress element or plugin that uses the 'plupload' will only present
+an HTML5-based multi-file uploader if HTML5 is supported by the user's browser
+or an HMTL4-based single-file uploader in HTML5 is not supported. No Flash
+or Silverlight-based multi-file uploader will be provided.
+
+b) If you try to embed media into a Wordpress post using the [video] and
+[audio] short tags, the media player will be visible if the reader is using
+a browser that has HTML5 support for the media format in question; if not, the
+'Download Media' link will be offered. No Flash or Silverlight-based player
+element will be included.
+
+-------------------------------------------------------------------------------
+
+Optional dependencies:
+
+You may wish to install the following packages:
+
+	php-pecl-imagick: optimize image transformation
+	php-pecl-ssh2: for file transfert using ssh
+
+An opcode cache is also recommended:
+	php 5.5: php-opcache
+	php 5.4: php-pecl-zendopcache
+	php 5.3: php-pecl-apc
+
+-------------------------------------------------------------------------------

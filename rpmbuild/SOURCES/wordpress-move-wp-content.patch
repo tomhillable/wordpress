@@ -1,0 +1,30 @@
+diff -up wordpress/wp-includes/default-constants.php.rhbz522897 wordpress/wp-includes/default-constants.php
+--- wordpress/wp-includes/default-constants.php.rhbz522897	2010-05-26 04:42:15.000000000 +0200
++++ wordpress/wp-includes/default-constants.php	2011-06-02 12:29:57.919714584 +0200
+@@ -39,7 +39,7 @@ function wp_initial_constants( ) {
+ 		@ini_set('memory_limit', WP_MEMORY_LIMIT);
+ 
+ 	if ( !defined('WP_CONTENT_DIR') )
+-		define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' ); // no trailing slash, full paths only - WP_CONTENT_URL is defined further down
++		define( 'WP_CONTENT_DIR', '/var/www/wordpress/wp-content' ); // no trailing slash, full paths only - WP_CONTENT_URL is defined further down
+ 
+ 	// Add define('WP_DEBUG', true); to wp-config.php to enable display of notices during development.
+ 	if ( !defined('WP_DEBUG') )
+@@ -75,7 +75,7 @@ function wp_initial_constants( ) {
+  */
+ function wp_plugin_directory_constants( ) {
+ 	if ( !defined('WP_CONTENT_URL') )
+-		define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content'); // full url - WP_CONTENT_DIR is defined further up
++		define( 'WP_CONTENT_URL', get_option('siteurl')); // full url - WP_CONTENT_DIR is defined further up
+ 
+ 	/**
+ 	 * Allows for the plugins directory to be moved from the default location.
+@@ -100,7 +100,7 @@ function wp_plugin_directory_constants( 
+ 	 * @deprecated
+ 	 */
+ 	if ( !defined('PLUGINDIR') )
+-		define( 'PLUGINDIR', 'wp-content/plugins' ); // Relative to ABSPATH.  For back compat.
++		define( 'PLUGINDIR', WP_CONTENT_DIR . 'plugins' ); // Relative to ABSPATH.  For back compat.
+ 
+ 	/**
+ 	 * Allows for the mu-plugins directory to be moved from the default location.

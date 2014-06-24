@@ -1,0 +1,22 @@
+--- src/wp-includes/js/tinymce/plugins/media/plugin.js	2014-06-24 13:27:53.605000000 +0000
++++ /tmp/plugin.js	2014-06-24 14:25:23.523000000 +0000
+@@ -41,10 +41,6 @@
+ 			return 'video/ogg';
+ 		}
+ 
+-		if (url.indexOf('.swf') != -1) {
+-			return 'application/x-shockwave-flash';
+-		}
+-
+ 		return '';
+ 	}
+ 
+@@ -214,7 +210,7 @@
+ 		data.source1mime = guessMime(data.source1);
+ 		data.source2mime = guessMime(data.source2);
+ 		data.poster = editor.convertURL(data.poster, "poster");
+-		data.flashPlayerUrl = editor.convertURL(url + '/moxieplayer.swf', "movie");
++		data.flashPlayerUrl = false;
+ 
+ 		tinymce.each(urlPatterns, function(pattern) {
+ 			var match, i, url;

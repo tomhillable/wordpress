@@ -1,0 +1,86 @@
+diff -up wordpress/wp-admin/includes/class-wp-upgrader.php.nop wordpress/wp-admin/includes/class-wp-upgrader.php
+--- wordpress/wp-admin/includes/class-wp-upgrader.php.nop	2014-04-15 12:57:14.000000000 +0200
++++ wordpress/wp-admin/includes/class-wp-upgrader.php	2014-05-07 17:25:04.434588696 +0200
+@@ -1546,6 +1546,9 @@ class Core_Upgrader extends WP_Upgrader
+ 			}
+ 		}
+ 
++		// RPM: nether allow core update
++		return false;
++
+ 		// 1: If we're already on that version, not much point in updating?
+ 		if ( $offered_ver == $wp_version )
+ 			return false;
+@@ -1734,7 +1737,7 @@ class WP_Automatic_Updater {
+ 	 */
+ 	public function is_disabled() {
+ 		// Background updates are disabled if you don't want file changes.
+-		if ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
++		if ( !defined( 'DISALLOW_FILE_MODS' ) || DISALLOW_FILE_MODS )
+ 			return true;
+ 
+ 		if ( defined( 'WP_INSTALLING' ) )
+diff -up wordpress/wp-admin/includes/update.php.nop wordpress/wp-admin/includes/update.php
+--- wordpress/wp-admin/includes/update.php.nop	2014-04-16 02:38:14.000000000 +0200
++++ wordpress/wp-admin/includes/update.php	2014-05-07 17:26:14.139840288 +0200
+@@ -216,8 +216,6 @@ function update_nag() {
+ 	}
+ 	echo "<div class='update-nag'>$msg</div>";
+ }
+-add_action( 'admin_notices', 'update_nag', 3 );
+-add_action( 'network_admin_notices', 'update_nag', 3 );
+ 
+ // Called directly from dashboard
+ function update_right_now_message() {
+@@ -232,7 +230,7 @@ function update_right_now_message() {
+ 		$cur = get_preferred_from_update_core();
+ 
+ 		if ( isset( $cur->response ) && $cur->response == 'upgrade' )
+-			$msg .= " <a href='" . network_admin_url( 'update-core.php' ) . "' class='button'>" . sprintf( __('Update to %s'), $cur->current ? $cur->current : __( 'Latest' ) ) . '</a>';
++			$msg .= '';
+ 	}
+ 
+ 	echo "<p id='wp-version-message'>$msg</p>";
+diff -up wordpress/wp-includes/capabilities.php.nop wordpress/wp-includes/capabilities.php
+--- wordpress/wp-includes/capabilities.php.nop	2014-03-04 04:09:15.000000000 +0100
++++ wordpress/wp-includes/capabilities.php	2014-05-07 17:25:04.434588696 +0200
+@@ -1238,7 +1238,7 @@ function map_meta_cap( $cap, $user_id )
+ 		// Disallow the file editors.
+ 		if ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT )
+ 			$caps[] = 'do_not_allow';
+-		elseif ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
++		elseif ( !defined( 'DISALLOW_FILE_MODS' ) || DISALLOW_FILE_MODS )
+ 			$caps[] = 'do_not_allow';
+ 		elseif ( is_multisite() && ! is_super_admin( $user_id ) )
+ 			$caps[] = 'do_not_allow';
+@@ -1254,7 +1254,7 @@ function map_meta_cap( $cap, $user_id )
+ 	case 'update_core':
+ 		// Disallow anything that creates, deletes, or updates core, plugin, or theme files.
+ 		// Files in uploads are excepted.
+-		if ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS )
++		if ( !defined( 'DISALLOW_FILE_MODS' ) || DISALLOW_FILE_MODS )
+ 			$caps[] = 'do_not_allow';
+ 		elseif ( is_multisite() && ! is_super_admin( $user_id ) )
+ 			$caps[] = 'do_not_allow';
+diff -up wordpress/wp-includes/update.php.nop wordpress/wp-includes/update.php
+--- wordpress/wp-includes/update.php.nop	2014-04-16 02:38:14.000000000 +0200
++++ wordpress/wp-includes/update.php	2014-05-07 17:25:04.435588699 +0200
+@@ -602,9 +602,6 @@ function _maybe_update_themes() {
+  * @since 3.1.0
+  */
+ function wp_schedule_update_checks() {
+-	if ( !wp_next_scheduled('wp_version_check') && !defined('WP_INSTALLING') )
+-		wp_schedule_event(time(), 'twicedaily', 'wp_version_check');
+-
+ 	if ( !wp_next_scheduled('wp_update_plugins') && !defined('WP_INSTALLING') )
+ 		wp_schedule_event(time(), 'twicedaily', 'wp_update_plugins');
+ 
+@@ -630,8 +627,6 @@ if ( ( ! is_main_site() && ! is_network_
+ 	return;
+ 
+ add_action( 'admin_init', '_maybe_update_core' );
+-add_action( 'wp_version_check', 'wp_version_check' );
+-add_action( 'upgrader_process_complete', 'wp_version_check', 10, 0 );
+ 
+ add_action( 'load-plugins.php', 'wp_update_plugins' );
+ add_action( 'load-update.php', 'wp_update_plugins' );
